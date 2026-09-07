@@ -1,48 +1,467 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="COMPRA SPEED — catálogo de productos y servicios">
-<meta name="theme-color" content="#ff6b00">
-<title>COMPRA SPEED</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>COMPRA SPEED | Productos y Servicios</title>
+
+    <meta
+        name="description"
+        content="COMPRA SPEED - Productos, tecnología, perfumes, ropa, servicios y mucho más."
+    >
+
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<header class="header"><div class="wrap nav">
-<a class="logo" href="#"><span>🛍️</span> COMPRA <b>SPEED</b></a>
-<button class="menu" id="menu">☰</button>
-<nav id="nav"><a href="#inicio">Inicio</a><a href="#catalogo">Catálogo</a><a href="#servicios">Servicios</a><a href="#contacto">Contacto</a></nav>
-</div></header>
+
+<header class="header">
+
+    <div class="container">
+
+        <div class="logo">
+            <a href="#inicio">
+                🛍️ <span>COMPRA SPEED</span>
+            </a>
+        </div>
+
+        <button class="menu-toggle" id="menuToggle">
+            ☰
+        </button>
+
+        <nav class="nav" id="navMenu">
+
+            <a href="#inicio">Inicio</a>
+
+            <a href="#catalogo">Catálogo</a>
+
+            <a href="#servicios">Servicios</a>
+
+            <a href="#contacto">Contacto</a>
+
+            <a href="admin.html" class="admin-link">
+                ⚙️ Admin
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
 
 <main>
-<section class="hero" id="inicio"><div class="wrap hero-in">
-<div class="hero-copy"><div class="pill">⚡ NUEVOS PRODUCTOS CONSTANTEMENTE</div><h1>Compra fácil.<br><em>Compra rápido.</em></h1><p>Descubre productos, ofertas, pasajes y servicios de COMPRA SPEED. Haz tu pedido directamente por WhatsApp.</p>
-<div class="actions"><a class="btn orange" href="#catalogo">🛒 Explorar catálogo</a><a class="btn white" href="https://wa.me/5354560076" target="_blank" rel="noopener">💬 WhatsApp</a></div>
-<div class="stats"><span><strong>📦</strong> Variedad</span><span><strong>🔥</strong> Ofertas</span><span><strong>🚚</strong> Mensajería</span></div></div>
-<div class="hero-art"><div class="orb">🛍️</div><div class="float f1">🔥 Ofertas</div><div class="float f2">⚡ Compra Speed</div></div>
-</div></section>
 
-<section class="wrap categories"><div class="section-title"><div><small>EXPLORA</small><h2>Categorías</h2></div></div><div id="cats" class="cat-row"></div></section>
+    <!-- HERO -->
 
-<section id="catalogo" class="catalog"><div class="wrap">
-<div class="catalog-top"><div><small>CATÁLOGO</small><h2>Productos</h2><p id="count"></p></div>
-<div class="tools"><label>🔎 <input id="search" placeholder="Buscar productos..." autocomplete="off"></label><select id="sort"><option value="default">Ordenar</option><option value="az">A → Z</option><option value="za">Z → A</option></select></div></div>
-<div id="grid" class="grid"></div><div id="empty" class="empty" hidden>🔎<h3>No hay resultados</h3><p>Prueba otra búsqueda o categoría.</p></div>
-</div></section>
+    <section id="inicio" class="hero">
 
-<section id="servicios" class="wrap services"><div class="section-title"><div><small>SERVICIOS</small><h2>También ofrecemos</h2></div></div>
-<div class="service-grid">
-<article><span>🇬🇾</span><h3>Pasajes para Guyana</h3><p>Consulta disponibilidad y precios.</p><a href="https://wa.me/5354560076?text=Hola%20COMPRA%20SPEED%2C%20quiero%20informaci%C3%B3n%20sobre%20pasajes%20para%20Guyana." target="_blank">Consultar →</a></article>
-<article><span>🇧🇷</span><h3>Pasajes para Brasil</h3><p>Información y atención por WhatsApp.</p><a href="https://wa.me/5354560076?text=Hola%20COMPRA%20SPEED%2C%20quiero%20informaci%C3%B3n%20sobre%20pasajes%20para%20Brasil." target="_blank">Consultar →</a></article>
-<article><span>🚚</span><h3>Mensajería</h3><p>Matanzas · Jovellanos · San Joaquín</p><a href="https://wa.me/5354560076?text=Hola%20COMPRA%20SPEED%2C%20quiero%20informaci%C3%B3n%20sobre mensajer%C3%ADa." target="_blank">Consultar →</a></article>
-</div></section>
+        <div class="container">
 
-<section class="cta"><div class="wrap cta-in"><div><small>COMPRA SPEED</small><h2>¿Viste algo que te interesa?</h2><p>Escríbenos y te ayudamos con tu pedido.</p></div><a class="btn white" href="https://wa.me/5354560076" target="_blank">💬 Pedir por WhatsApp</a></div></section>
+            <div class="hero-content">
+
+                <span class="hero-badge">
+                    ⚡ COMPRA SPEED
+                </span>
+
+                <h1>
+                    Compra rápido.<br>
+                    Compra fácil.
+                </h1>
+
+                <p>
+                    Descubre nuestros productos y servicios.
+                    Haz tu pedido directamente por WhatsApp.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="#catalogo" class="btn">
+                        🛍️ Ver catálogo
+                    </a>
+
+                    <a
+                        href="https://wa.me/5354560076"
+                        target="_blank"
+                        class="btn"
+                    >
+                        💬 WhatsApp
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CATALOGO -->
+
+    <section id="catalogo" class="catalog-section">
+
+        <div class="container">
+
+            <div class="section-header">
+
+                <span>🛍️ NUESTRO CATÁLOGO</span>
+
+                <h2>
+                    Encuentra lo que necesitas
+                </h2>
+
+                <p>
+                    Explora todos nuestros productos disponibles.
+                </p>
+
+            </div>
+
+
+            <!-- BUSCADOR -->
+
+            <div class="catalog-tools">
+
+                <div class="search-box">
+
+                    <input
+                        type="search"
+                        id="searchInput"
+                        placeholder="🔎 Buscar producto..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <select id="sortSelect">
+
+                    <option value="default">
+                        Ordenar
+                    </option>
+
+                    <option value="az">
+                        A → Z
+                    </option>
+
+                    <option value="za">
+                        Z → A
+                    </option>
+
+                    <option value="price-low">
+                        Precio menor
+                    </option>
+
+                    <option value="price-high">
+                        Precio mayor
+                    </option>
+
+                    <option value="newest">
+                        Más nuevos
+                    </option>
+
+                </select>
+
+
+                <button
+                    id="openCart"
+                    class="cart-button"
+                    type="button"
+                >
+
+                    🛒 Carrito
+
+                    <span id="cartCount">
+                        0
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <!-- CATEGORIAS -->
+
+            <div
+                class="categories"
+                id="categories"
+            >
+            </div>
+
+
+            <!-- PRODUCTOS -->
+
+            <div
+                class="products-grid"
+                id="productsGrid"
+            >
+
+                <div class="loading">
+                    Cargando productos...
+                </div>
+
+            </div>
+
+
+            <div
+                id="emptyProducts"
+                class="empty-products"
+                style="display:none;"
+            >
+
+                <h3>
+                    😕 No encontramos productos
+                </h3>
+
+                <p>
+                    Prueba con otra búsqueda o categoría.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- SERVICIOS -->
+
+    <section id="servicios" class="services-section">
+
+        <div class="container">
+
+            <div class="section-header">
+
+                <span>🚀 NUESTROS SERVICIOS</span>
+
+                <h2>
+                    También ofrecemos
+                </h2>
+
+            </div>
+
+
+            <div class="services-grid">
+
+                <article class="service-card">
+
+                    <div class="service-icon">
+                        ✈️
+                    </div>
+
+                    <h3>
+                        Pasajes para Guyana
+                    </h3>
+
+                    <p>
+                        Gestión y venta de pasajes para Guyana.
+                    </p>
+
+                </article>
+
+
+                <article class="service-card">
+
+                    <div class="service-icon">
+                        ✈️
+                    </div>
+
+                    <h3>
+                        Pasajes para Brasil
+                    </h3>
+
+                    <p>
+                        Consulta disponibilidad y precios.
+                    </p>
+
+                </article>
+
+
+                <article class="service-card">
+
+                    <div class="service-icon">
+                        📦
+                    </div>
+
+                    <h3>
+                        Mensajería
+                    </h3>
+
+                    <p>
+                        Mensajería disponible en Matanzas,
+                        Jovellanos y San Joaquín.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CONTACTO -->
+
+    <section id="contacto" class="contact-section">
+
+        <div class="container">
+
+            <div class="section-header">
+
+                <span>📲 CONTACTO</span>
+
+                <h2>
+                    ¿Necesitas algo?
+                </h2>
+
+                <p>
+                    Escríbenos y te atenderemos directamente.
+                </p>
+
+            </div>
+
+
+            <div class="contact-buttons">
+
+                <a
+                    href="https://wa.me/5354560076"
+                    target="_blank"
+                    class="btn"
+                >
+                    💬 WhatsApp
+                </a>
+
+                <a
+                    href="mailto:darielramirezxlol2006@gmail.com"
+                    class="btn"
+                >
+                    ✉️ Email
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
 </main>
 
-<footer id="contacto"><div class="wrap foot"><div><a class="logo" href="#"><span>🛍️</span> COMPRA <b>SPEED</b></a><p>Variedad, calidad, pasajes y buenos precios en un solo lugar.</p></div><div><h4>Contacto</h4><a href="tel:+5354560076">📱 +53 54560076</a><a href="mailto:darielramirezxlol2006@gmail.com">✉️ darielramirezxlol2006@gmail.com</a></div><div><h4>Mensajería</h4><p>📍 Matanzas</p><p>📍 Jovellanos</p><p>📍 San Joaquín</p></div></div><div class="copy">© <span id="year"></span> COMPRA SPEED</div></footer>
-<div id="modal" class="modal" aria-hidden="true"><div class="backdrop"></div><div class="modal-box"><button id="close">×</button><div id="modalBody"></div></div></div>
+
+<!-- MODAL PRODUCTO -->
+
+<div
+    class="modal"
+    id="productModal"
+    aria-hidden="true"
+>
+
+    <div class="modal-overlay" id="modalOverlay"></div>
+
+    <div class="modal-content">
+
+        <button
+            class="modal-close"
+            id="closeModal"
+            type="button"
+        >
+            ×
+        </button>
+
+        <div id="productDetails"></div>
+
+    </div>
+
+</div>
+
+
+<!-- MODAL CARRITO -->
+
+<div
+    class="modal"
+    id="cartModal"
+    aria-hidden="true"
+>
+
+    <div
+        class="modal-overlay"
+        id="cartOverlay"
+    ></div>
+
+    <div class="modal-content cart-modal">
+
+        <button
+            class="modal-close"
+            id="closeCart"
+            type="button"
+        >
+            ×
+        </button>
+
+        <h2>
+            🛒 Mi carrito
+        </h2>
+
+        <div id="cartBody"></div>
+
+    </div>
+
+</div>
+
+
+<footer id="footer">
+
+    <div class="container">
+
+        <div class="footer-content">
+
+            <div>
+
+                <h3>
+                    🛍️ COMPRA SPEED
+                </h3>
+
+                <p>
+                    Productos y servicios al alcance de todos.
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <h4>
+                    Contacto
+                </h4>
+
+                <p>
+                    📱 +53 54560076
+                </p>
+
+                <p>
+                    ✉️ darielramirezxlol2006@gmail.com
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            © <span id="year"></span>
+            COMPRA SPEED.
+            Todos los derechos reservados.
+
+        </div>
+
+    </div>
+
+</footer>
+
+
 <script src="script.js"></script>
-</body></html>
+
+</body>
+</html>
