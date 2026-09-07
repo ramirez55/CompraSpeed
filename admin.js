@@ -1572,14 +1572,24 @@ function showPage(page) {
 /* =========================================================
    PRECIO
    ========================================================= */
+<div class="form-group">
+    <label for="productCurrency">Moneda</label>
 
-function formatPrice(value) {
+    <select id="productCurrency" required>
+        <option value="USD">USD — Dólares</option>
+        <option value="CUP">CUP — Pesos cubanos</option>
+    </select>
+</div>
+function formatPrice(value, currency = "USD") {
 
-    return (
+    const money =
         Number(value || 0)
-            .toLocaleString("es-CU")
-        + " CUP"
-    );
+            .toLocaleString("es-CU", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+    return `${money} ${currency || "USD"}`;
 
 }
 
