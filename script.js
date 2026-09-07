@@ -1963,6 +1963,7 @@ function formatPrice(value) {
             "es-CU"
         ) +
         " USD"
+        " CUP"
     );
 }
 
