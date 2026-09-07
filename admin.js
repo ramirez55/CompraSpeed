@@ -10,7 +10,7 @@
 
 const SUPABASE_URL = "https://wdmcwutfagjmvoooxqtq.supabase.co";
 
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkbWN3dXRmYWdqbXZvb294cXRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MDAxMjEsImV4cCI6MjEwNDM3NjEyMX0.ok60WAQ6MdHBJKoX9anzREplV51w46SL5shdywKe8aY";
+const SUPABASE_ANON_KEY = "sb_publishable_BWm-UjX3_XQzko8jhInLbg_duQuRuCd";
 
 
 /* =========================================================
