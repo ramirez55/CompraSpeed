@@ -22,8 +22,8 @@ const products = [
   },
   {
     id: 2,
-    name: "Otro producto",
-    price: "Consultar",
+    name: "Bonabel Agua Orquideas",
+    price: "1700",
     category: "Perfumes",
     image: "",
     description: "Puedes agregar tantos productos como quieras."
