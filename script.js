@@ -1962,7 +1962,7 @@ function formatPrice(value) {
         number.toLocaleString(
             "es-CU"
         ) +
-        " CUP"
+        " USD"
     );
 }
 
