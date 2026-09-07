@@ -25,7 +25,7 @@ const products = [
     name: "Bonabel Agua Orquideas",
     price: "1700",
     category: "Perfumes",
-    image: "",
+    image: "productos/Bonabel.jpg",
     description: "Puedes agregar tantos productos como quieras."
   }
 
