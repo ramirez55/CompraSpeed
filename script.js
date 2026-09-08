@@ -5,10 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let settings = JSON.parse(localStorage.getItem('cs_settings')) || { exchangeRate: 320, defaultCurrency: 'USD' };
     let currentCurrency = settings.defaultCurrency;
 
-    let products = JSON.parse(localStorage.getItem('cs_products')) || [
-        { id: 1, name: 'iPhone 15', category: 'Tecnología', price: 800, currency: 'USD', oldPrice: 900, stock: 5, badge: 'Nuevo', active: true, featured: true, description: 'Excelente estado, importado.', image: '' },
-        { id: 2, name: 'Perfume Elegance', category: 'Perfumes', price: 3200, currency: 'CUP', oldPrice: 4000, stock: 10, badge: 'Oferta', active: true, featured: false, description: 'Fragancia duradera 100ml.', image: '' }
-    ];
+    let products = JSON.parse(localStorage.getItem('cs_products')) || [];
 
     let cart = JSON.parse(localStorage.getItem('cs_cart')) || [];
     let selectedCategory = 'all';
@@ -89,23 +86,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (empty) empty.style.display = 'none';
 
-        grid.innerHTML = filtered.map(p => `
-            <div class="product-card">
-                ${p.badge ? `<span class="badge">${p.badge}</span>` : ''}
-                <div class="product-image-container" style="width:100%; height:180px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#f0f0f0; margin-bottom:10px; border-radius:8px;">
-                    ${p.image ? `<img src="${p.image}" alt="${p.name}" style="width:100%; height:100%; object-fit:cover;">` : '<span style="font-size:3rem;">📦</span>'}
+        grid.innerHTML = filtered.map(p => {
+            const hasImage = p.image && p.image.trim() !== '';
+            const imageHtml = hasImage 
+                ? `<img src="${p.image}" alt="${p.name}" style="width:100%; height:100%; object-fit:cover; display:block;">` 
+                : `<span style="font-size:3rem; display:flex; align-items:center; justify-content:center; width:100%; height:100%;">📦</span>`;
+
+            return `
+                <div class="product-card">
+                    ${p.badge ? `<span class="badge">${p.badge}</span>` : ''}
+                    <div class="product-image-container" style="width:100%; height:200px; overflow:hidden; background:#f4f4f4; margin-bottom:12px; border-radius:8px;">
+                        ${imageHtml}
+                    </div>
+                    <h3>${p.name}</h3>
+                    <p class="category">${p.category}</p>
+                    <div class="prices">
+                        <span class="price">${formatPrice(p.price, p.currency)}</span>
+                        ${p.oldPrice ? `<span class="old-price" style="text-decoration:line-through; font-size:0.8em; color:#888;">${formatPrice(p.oldPrice, p.currency)}</span>` : ''}
+                    </div>
+                    <button onclick="addToCart(${p.id})" class="btn" ${p.stock <= 0 ? 'disabled' : ''}>
+                        ${p.stock > 0 ? '🛒 Añadir al Carrito' : 'Agotado'}
+                    </button>
                 </div>
-                <h3>${p.name}</h3>
-                <p class="category">${p.category}</p>
-                <div class="prices">
-                    <span class="price">${formatPrice(p.price, p.currency)}</span>
-                    ${p.oldPrice ? `<span class="old-price" style="text-decoration:line-through; font-size:0.8em; color:#888;">${formatPrice(p.oldPrice, p.currency)}</span>` : ''}
-                </div>
-                <button onclick="addToCart(${p.id})" class="btn" ${p.stock <= 0 ? 'disabled' : ''}>
-                    ${p.stock > 0 ? '🛒 Añadir al Carrito' : 'Agotado'}
-                </button>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     const searchInput = document.getElementById('searchInput');
@@ -143,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let total = 0;
-        let html = '<ul class="cart-list">';
+        let html = '<ul class="cart-list" style="list-style:none; padding:0;">';
         cart.forEach(item => {
             let itemPrice = item.price;
             if (item.currency === 'USD' && currentCurrency === 'CUP') itemPrice *= settings.exchangeRate;
