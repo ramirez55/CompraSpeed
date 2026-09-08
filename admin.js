@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Configuración Persistente
     let settings = JSON.parse(localStorage.getItem('cs_settings')) || { exchangeRate: 320, defaultCurrency: 'USD' };
     let products = JSON.parse(localStorage.getItem('cs_products')) || [];
+    let currentBase64Image = '';
 
-    // Cambiar entre Secciones (Páginas) del Panel
     const buttons = document.querySelectorAll('.sidebar-button, [data-go]');
     const pages = document.querySelectorAll('.admin-page');
 
@@ -25,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Manejo de Iniciar y Cerrar Sesión
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
@@ -45,28 +43,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Configuración de Moneda
-    const rateInput = document.getElementById('exchangeRate');
-    const currencySelect = document.getElementById('defaultCurrency');
-    const settingsForm = document.getElementById('settingsForm');
+    // Convertir la imagen cargada a Base64
+    const imageInput = document.getElementById('productImages');
+    const imagePreview = document.getElementById('imagePreview');
 
-    if (rateInput && currencySelect) {
-        rateInput.value = settings.exchangeRate;
-        currencySelect.value = settings.defaultCurrency;
-
-        settingsForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            settings.exchangeRate = parseFloat(rateInput.value);
-            settings.defaultCurrency = currencySelect.value;
-
-            localStorage.setItem('cs_settings', JSON.stringify(settings));
-            const msg = document.getElementById('settingsMessage');
-            msg.textContent = '¡Configuración guardada correctamente!';
-            msg.style.color = 'green';
+    if (imageInput) {
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    currentBase64Image = evt.target.result;
+                    if (imagePreview) {
+                        imagePreview.innerHTML = `<img src="${currentBase64Image}" style="max-width:100px; max-height:100px; border-radius:5px; margin-top:10px;">`;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
         });
     }
 
-    // Guardado de Productos (Añadir / Editar)
     const productForm = document.getElementById('productForm');
     if (productForm) {
         productForm.addEventListener('submit', (e) => {
@@ -84,12 +80,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 badge: document.getElementById('productBadge').value,
                 description: document.getElementById('productDescription').value,
                 active: document.getElementById('productActive').checked,
-                featured: document.getElementById('productFeatured').checked
+                featured: document.getElementById('productFeatured').checked,
+                image: currentBase64Image
             };
 
             if (editId) {
                 const index = products.findIndex(p => p.id === parseInt(editId));
-                if (index !== -1) products[index] = productData;
+                if (index !== -1) {
+                    if (!currentBase64Image) productData.image = products[index].image;
+                    products[index] = productData;
+                }
             } else {
                 products.push(productData);
             }
@@ -105,6 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function resetForm() {
         if (!productForm) return;
         productForm.reset();
+        currentBase64Image = '';
+        if (imagePreview) imagePreview.innerHTML = '';
         document.getElementById('productId').value = '';
         document.getElementById('formTitle').textContent = 'Publicar producto';
         document.getElementById('cancelEdit').style.display = 'none';
@@ -112,7 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('cancelEdit')?.addEventListener('click', resetForm);
 
-    // Renderizar Tablas y Métricas
     function renderDashboard() {
         document.getElementById('statTotal').textContent = products.length;
         document.getElementById('statVisible').textContent = products.filter(p => p.active).length;
@@ -131,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tableBody.innerHTML = products.map(p => `
             <tr>
-                <td>🖼️</td>
+                <td>${p.image ? `<img src="${p.image}" style="width:40px; height:40px; object-fit:cover; border-radius:4px;">` : '🖼️'}</td>
                 <td><strong>${p.name}</strong></td>
                 <td>${p.category}</td>
                 <td>$${p.price.toFixed(2)} (${p.currency})</td>
@@ -160,6 +161,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('productDescription').value = p.description || '';
         document.getElementById('productActive').checked = p.active;
         document.getElementById('productFeatured').checked = p.featured;
+
+        currentBase64Image = p.image || '';
+        if (imagePreview && p.image) {
+            imagePreview.innerHTML = `<img src="${p.image}" style="max-width:100px; max-height:100px; border-radius:5px; margin-top:10px;">`;
+        }
 
         document.getElementById('formTitle').textContent = 'Editar producto';
         document.getElementById('cancelEdit').style.display = 'inline-block';
