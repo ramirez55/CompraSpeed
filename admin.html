@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        COMPRA SPEED | Administración
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="admin.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- LOGIN -->
+
+<section
+    id="loginSection"
+    class="login-section"
+>
+
+    <div class="login-box">
+
+        <div class="login-logo">
+            🛍️
+        </div>
+
+        <h1>
+            COMPRA SPEED
+        </h1>
+
+        <p>
+            Panel de administración
+        </p>
+
+
+        <form id="loginForm">
+
+            <label>
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="loginEmail"
+                required
+                autocomplete="email"
+            >
+
+
+            <label>
+                Contraseña
+            </label>
+
+            <input
+                type="password"
+                id="loginPassword"
+                required
+                autocomplete="current-password"
+            >
+
+
+            <button
+                type="submit"
+            >
+                🔐 Iniciar sesión
+            </button>
+
+
+            <p
+                id="loginError"
+                class="error"
+            ></p>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- ADMIN -->
+
+<section
+    id="adminSection"
+    class="admin-section"
+    style="display:none;"
+>
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+
+            🛍️
+
+            <span>
+                COMPRA SPEED
+            </span>
+
+        </div>
+
+
+        <button
+            class="sidebar-button active"
+            data-page="dashboard"
+        >
+            📊 Dashboard
+        </button>
+
+
+        <button
+            class="sidebar-button"
+            data-page="products"
+        >
+            🛍️ Productos
+        </button>
+
+
+        <button
+            class="sidebar-button"
+            data-page="publish"
+        >
+            ➕ Publicar
+        </button>
+
+
+        <button
+            class="sidebar-button"
+            data-page="categories"
+        >
+            📂 Categorías
+        </button>
+
+
+        <a
+            href="index.html"
+            target="_blank"
+            class="sidebar-link"
+        >
+            🌐 Ver tienda
+        </a>
+
+
+        <button
+            id="logoutButton"
+            class="logout-button"
+        >
+            🚪 Cerrar sesión
+        </button>
+
+    </aside>
+
+
+    <!-- CONTENT -->
+
+    <main class="admin-content">
+
+
+        <!-- DASHBOARD -->
+
+        <section
+            class="admin-page active"
+            id="page-dashboard"
+        >
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>
+                        Dashboard
+                    </h1>
+
+                    <p>
+                        Bienvenido al panel de COMPRA SPEED.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <span>
+                        🛍️
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Productos
+                        </small>
+
+                        <strong id="statTotal">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>
+                        👁️
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Visibles
+                        </small>
+
+                        <strong id="statVisible">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>
+                        ⭐
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Destacados
+                        </small>
+
+                        <strong id="statFeatured">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>
+                        📦
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Agotados
+                        </small>
+
+                        <strong id="statOut">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <h2>
+                    Acciones rápidas
+                </h2>
+
+                <div class="quick-actions">
+
+                    <button
+                        data-go="publish"
+                    >
+                        ➕ Publicar producto
+                    </button>
+
+                    <button
+                        data-go="products"
+                    >
+                        🛍️ Administrar productos
+                    </button>
+
+                    <a
+                        href="index.html"
+                        target="_blank"
+                    >
+                        🌐 Abrir tienda
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PRODUCTOS -->
+
+        <section
+            class="admin-page"
+            id="page-products"
+        >
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>
+                        Productos
+                    </h1>
+
+                    <p>
+                        Administra todo tu catálogo.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="primary-button"
+                    data-go="publish"
+                >
+                    ➕ Nuevo producto
+                </button>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Imagen
+                            </th>
+
+                            <th>
+                                Producto
+                            </th>
+
+                            <th>
+                                Categoría
+                            </th>
+
+                            <th>
+                                Precio
+                            </th>
+
+                            <th>
+                                Stock
+                            </th>
+
+                            <th>
+                                Estado
+                            </th>
+
+                            <th>
+                                Acciones
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="productsTable">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- PUBLICAR -->
+
+        <section
+            class="admin-page"
+            id="page-publish"
+        >
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1 id="formTitle">
+                        Publicar producto
+                    </h1>
+
+                    <p>
+                        Añade un nuevo producto a tu tienda.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form
+                id="productForm"
+                class="product-form"
+            >
+
+                <input
+                    type="hidden"
+                    id="productId"
+                >
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group full">
+
+                        <label>
+                            Fotos del producto
+                        </label>
+
+                        <input
+                            type="file"
+                            id="productImages"
+                            accept="image/*"
+                            multiple
+                        >
+
+                        <small>
+                            Puedes seleccionar varias imágenes.
+                        </small>
+
+
+                        <div
+                            id="imagePreview"
+                            class="image-preview"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Nombre *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="productName"
+                            required
+                            placeholder="Ej: iPhone 15"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Categoría *
+                        </label>
+
+                        <select
+                            id="productCategory"
+                            required
+                        ></select>
+
+                    </div>
+
+
+                   <div class="form-group">
+
+    <label>
+        Precio actual *
+    </label>
+
+    <input
+        type="number"
+        id="productPrice"
+        min="0"
+        step="0.01"
+        required
+        placeholder="1700"
+    >
+
+</div>
+
+
+<div class="form-group">
+
+    <label>
+        Moneda *
+    </label>
+
+    <select
+        id="productCurrency"
+        required
+    >
+
+        <option value="USD">
+            USD — Dólares
+        </option>
+
+        <option value="CUP">
+            CUP — Pesos cubanos
+        </option>
+
+    </select>
+
+</div>
+
+
+<div class="form-group">
+
+    <label>
+        Precio anterior
+    </label>
+
+    <input
+        type="number"
+        id="productOldPrice"
+        min="0"
+        step="0.01"
+        placeholder="2000"
+    >
+
+</div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Stock *
+                        </label>
+
+                        <input
+                            type="number"
+                            id="productStock"
+                            min="0"
+                            step="1"
+                            value="1"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Etiqueta
+                        </label>
+
+                        <select id="productBadge">
+
+                            <option value="">
+                                Ninguna
+                            </option>
+
+                            <option value="Nuevo">
+                                Nuevo
+                            </option>
+
+                            <option value="Oferta">
+                                Oferta
+                            </option>
+
+                            <option value="Popular">
+                                Popular
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group full">
+
+                        <label>
+                            Descripción
+                        </label>
+
+                        <textarea
+                            id="productDescription"
+                            rows="5"
+                            placeholder="Describe el producto..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="checkbox-group">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                id="productActive"
+                                checked
+                            >
+
+                            Mostrar producto en la tienda
+
+                        </label>
+
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                id="productFeatured"
+                            >
+
+                            Producto destacado
+
+                        </label>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                    >
+                        💾 Guardar producto
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="cancelEdit"
+                        class="secondary-button"
+                    >
+                        Cancelar
+                    </button>
+
+                </div>
+
+
+                <p
+                    id="formMessage"
+                    class="form-message"
+                ></p>
+
+            </form>
+
+        </section>
+
+
+        <!-- CATEGORIAS -->
+
+        <section
+            class="admin-page"
+            id="page-categories"
+        >
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>
+                        Categorías
+                    </h1>
+
+                    <p>
+                        Categorías disponibles en la tienda.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="categoriesAdmin"
+                class="categories-admin"
+            ></div>
+
+        </section>
+
+
+    </main>
+
+</section>
+
+
+<script src="admin.js"></script>
+
+</body>
+
+</html>
