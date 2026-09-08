@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Convertir la imagen cargada a Base64
+    // Convertir imagen a Base64 optimizando tamaño
     const imageInput = document.getElementById('productImages');
     const imagePreview = document.getElementById('imagePreview');
 
@@ -55,11 +55,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 reader.onload = function(evt) {
                     currentBase64Image = evt.target.result;
                     if (imagePreview) {
-                        imagePreview.innerHTML = `<img src="${currentBase64Image}" style="max-width:100px; max-height:100px; border-radius:5px; margin-top:10px;">`;
+                        imagePreview.innerHTML = `<img src="${currentBase64Image}" style="width:100px; height:100px; object-fit:cover; border-radius:8px; margin-top:10px;">`;
                     }
                 };
                 reader.readAsDataURL(file);
             }
+        });
+    }
+
+    const rateInput = document.getElementById('exchangeRate');
+    const currencySelect = document.getElementById('defaultCurrency');
+    const settingsForm = document.getElementById('settingsForm');
+
+    if (rateInput && currencySelect) {
+        rateInput.value = settings.exchangeRate;
+        currencySelect.value = settings.defaultCurrency;
+
+        settingsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            settings.exchangeRate = parseFloat(rateInput.value);
+            settings.defaultCurrency = currencySelect.value;
+
+            localStorage.setItem('cs_settings', JSON.stringify(settings));
+            const msg = document.getElementById('settingsMessage');
+            msg.textContent = '¡Configuración guardada correctamente!';
+            msg.style.color = 'green';
         });
     }
 
@@ -69,6 +89,13 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
 
             const editId = document.getElementById('productId').value;
+            let finalImage = currentBase64Image;
+
+            if (editId && !currentBase64Image) {
+                const existingProduct = products.find(p => p.id === parseInt(editId));
+                if (existingProduct) finalImage = existingProduct.image || '';
+            }
+
             const productData = {
                 id: editId ? parseInt(editId) : Date.now(),
                 name: document.getElementById('productName').value,
@@ -81,15 +108,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 description: document.getElementById('productDescription').value,
                 active: document.getElementById('productActive').checked,
                 featured: document.getElementById('productFeatured').checked,
-                image: currentBase64Image
+                image: finalImage
             };
 
             if (editId) {
                 const index = products.findIndex(p => p.id === parseInt(editId));
-                if (index !== -1) {
-                    if (!currentBase64Image) productData.image = products[index].image;
-                    products[index] = productData;
-                }
+                if (index !== -1) products[index] = productData;
             } else {
                 products.push(productData);
             }
@@ -130,20 +154,27 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        tableBody.innerHTML = products.map(p => `
-            <tr>
-                <td>${p.image ? `<img src="${p.image}" style="width:40px; height:40px; object-fit:cover; border-radius:4px;">` : '🖼️'}</td>
-                <td><strong>${p.name}</strong></td>
-                <td>${p.category}</td>
-                <td>$${p.price.toFixed(2)} (${p.currency})</td>
-                <td>${p.stock}</td>
-                <td>${p.active ? '🟢 Visible' : '🔴 Oculto'}</td>
-                <td>
-                    <button onclick="editProduct(${p.id})">✏️</button>
-                    <button onclick="deleteProduct(${p.id})">❌</button>
-                </td>
-            </tr>
-        `).join('');
+        tableBody.innerHTML = products.map(p => {
+            const hasImage = p.image && p.image.trim() !== '';
+            const imgHtml = hasImage 
+                ? `<img src="${p.image}" style="width:40px; height:40px; object-fit:cover; border-radius:4px;">` 
+                : '📦';
+
+            return `
+                <tr>
+                    <td>${imgHtml}</td>
+                    <td><strong>${p.name}</strong></td>
+                    <td>${p.category}</td>
+                    <td>$${p.price.toFixed(2)} (${p.currency})</td>
+                    <td>${p.stock}</td>
+                    <td>${p.active ? '🟢 Visible' : '🔴 Oculto'}</td>
+                    <td>
+                        <button onclick="editProduct(${p.id})">✏️</button>
+                        <button onclick="deleteProduct(${p.id})">❌</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     }
 
     window.editProduct = function(id) {
@@ -164,7 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentBase64Image = p.image || '';
         if (imagePreview && p.image) {
-            imagePreview.innerHTML = `<img src="${p.image}" style="max-width:100px; max-height:100px; border-radius:5px; margin-top:10px;">`;
+            imagePreview.innerHTML = `<img src="${p.image}" style="width:100px; height:100px; object-fit:cover; border-radius:8px; margin-top:10px;">`;
+        } else if (imagePreview) {
+            imagePreview.innerHTML = '';
         }
 
         document.getElementById('formTitle').textContent = 'Editar producto';
