@@ -8,9 +8,11 @@
    SUPABASE
    ========================================================= */
 
-const SUPABASE_URL = "https://wdmcwutfagjmvoooxqtq.supabase.co";
+const SUPABASE_URL =
+    "https://wdmcwutfagjmvoooxqtq.supabase.co";
 
-const SUPABASE_ANON_KEY = "sb_publishable_BWm-UjX3_XQzko8jhInLbg_duQuRuCd";
+const SUPABASE_ANON_KEY =
+    "sb_publishable_BWm-UjX3_XQzko8jhInLbg_duQuRuCd";
 
 
 /* =========================================================
@@ -85,24 +87,16 @@ const CATEGORIES = [
    ========================================================= */
 
 const loginSection =
-    document.getElementById(
-        "loginSection"
-    );
+    document.getElementById("loginSection");
 
 const adminSection =
-    document.getElementById(
-        "adminSection"
-    );
+    document.getElementById("adminSection");
 
 const loginForm =
-    document.getElementById(
-        "loginForm"
-    );
+    document.getElementById("loginForm");
 
 const loginError =
-    document.getElementById(
-        "loginError"
-    );
+    document.getElementById("loginError");
 
 
 /* =========================================================
@@ -111,7 +105,7 @@ const loginError =
 
 document.addEventListener(
     "DOMContentLoaded",
-    async () => {
+    () => {
 
         renderCategorySelect();
 
@@ -137,6 +131,11 @@ document.addEventListener(
 
 function setupLogin() {
 
+    if (!loginForm) {
+        console.error("No existe #loginForm en admin.html");
+        return;
+    }
+
     loginForm.addEventListener(
         "submit",
         async event => {
@@ -157,7 +156,9 @@ function setupLogin() {
 
 async function login() {
 
-    loginError.textContent = "";
+    if (loginError) {
+        loginError.textContent = "";
+    }
 
 
     if (
@@ -165,8 +166,27 @@ async function login() {
         !SUPABASE_ANON_KEY
     ) {
 
-        loginError.textContent =
-            "Configura SUPABASE_URL y SUPABASE_ANON_KEY en admin.js.";
+        showLoginError(
+            "Falta configurar Supabase."
+        );
+
+        return;
+
+    }
+
+
+    const emailInput =
+        document.getElementById("loginEmail");
+
+    const passwordInput =
+        document.getElementById("loginPassword");
+
+
+    if (!emailInput || !passwordInput) {
+
+        showLoginError(
+            "No se encontraron los campos de login."
+        );
 
         return;
 
@@ -174,18 +194,27 @@ async function login() {
 
 
     const email =
-        document.getElementById(
-            "loginEmail"
-        ).value.trim();
-
+        emailInput.value.trim();
 
     const password =
-        document.getElementById(
-            "loginPassword"
-        ).value;
+        passwordInput.value;
+
+
+    if (!email || !password) {
+
+        showLoginError(
+            "Escribe tu correo y contraseña."
+        );
+
+        return;
+
+    }
 
 
     try {
+
+        setLoginLoading(true);
+
 
         const response =
             await fetch(
@@ -214,12 +243,28 @@ async function login() {
             await response.json();
 
 
+        console.log(
+            "Respuesta Supabase:",
+            data
+        );
+
+
         if (!response.ok) {
 
             throw new Error(
                 data.error_description ||
                 data.msg ||
-                "Email o contraseña incorrectos."
+                data.message ||
+                "Correo o contraseña incorrectos."
+            );
+
+        }
+
+
+        if (!data.access_token) {
+
+            throw new Error(
+                "Supabase no devolvió un token de acceso."
             );
 
         }
@@ -234,16 +279,86 @@ async function login() {
         );
 
 
-        showAdmin();
+        await showAdmin();
 
     }
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            "ERROR LOGIN:",
+            error
+        );
+
+
+        showLoginError(
+            error.message ||
+            "No se pudo iniciar sesión."
+        );
+
+    }
+
+    finally {
+
+        setLoginLoading(false);
+
+    }
+
+}
+
+
+/* =========================================================
+   ERROR LOGIN
+   ========================================================= */
+
+function showLoginError(message) {
+
+    if (loginError) {
 
         loginError.textContent =
-            error.message;
+            message;
+
+    }
+
+}
+
+
+/* =========================================================
+   ESTADO BOTÓN LOGIN
+   ========================================================= */
+
+function setLoginLoading(loading) {
+
+    const button =
+        loginForm
+            ? loginForm.querySelector(
+                'button[type="submit"]'
+            )
+            : null;
+
+
+    if (!button) return;
+
+
+    if (loading) {
+
+        button.disabled = true;
+
+        button.dataset.originalText =
+            button.textContent;
+
+        button.textContent =
+            "Iniciando sesión...";
+
+    }
+
+    else {
+
+        button.disabled = false;
+
+        button.textContent =
+            button.dataset.originalText ||
+            "Iniciar sesión";
 
     }
 
@@ -282,7 +397,13 @@ function loadStoredSession() {
 
     }
 
-    catch {
+    catch (error) {
+
+        console.error(
+            "Sesión guardada inválida:",
+            error
+        );
+
 
         localStorage.removeItem(
             "compra_speed_admin_session"
@@ -299,11 +420,20 @@ function loadStoredSession() {
 
 async function showAdmin() {
 
-    loginSection.style.display =
-        "none";
+    if (loginSection) {
 
-    adminSection.style.display =
-        "flex";
+        loginSection.style.display =
+            "none";
+
+    }
+
+
+    if (adminSection) {
+
+        adminSection.style.display =
+            "flex";
+
+    }
 
 
     await loadProducts();
@@ -317,26 +447,44 @@ async function showAdmin() {
 
 function setupLogout() {
 
-    document
-        .getElementById("logoutButton")
-        .addEventListener(
-            "click",
-            () => {
+    const logoutButton =
+        document.getElementById(
+            "logoutButton"
+        );
 
-                session = null;
 
-                localStorage.removeItem(
-                    "compra_speed_admin_session"
-                );
+    if (!logoutButton) return;
+
+
+    logoutButton.addEventListener(
+        "click",
+        () => {
+
+            session = null;
+
+
+            localStorage.removeItem(
+                "compra_speed_admin_session"
+            );
+
+
+            if (adminSection) {
 
                 adminSection.style.display =
                     "none";
+
+            }
+
+
+            if (loginSection) {
 
                 loginSection.style.display =
                     "flex";
 
             }
-        );
+
+        }
+    );
 
 }
 
@@ -346,6 +494,18 @@ function setupLogout() {
    ========================================================= */
 
 function authHeaders() {
+
+    if (
+        !session ||
+        !session.access_token
+    ) {
+
+        throw new Error(
+            "Sesión no válida. Inicia sesión nuevamente."
+        );
+
+    }
+
 
     return {
 
@@ -375,15 +535,23 @@ async function loadProducts() {
             await fetch(
                 `${SUPABASE_URL}/rest/v1/products?select=*&order=created_at.desc`,
                 {
+                    method: "GET",
+
                     headers:
                         authHeaders()
+
                 }
             );
 
 
         if (!response.ok) {
 
+            const errorText =
+                await response.text();
+
+
             throw new Error(
+                errorText ||
                 "No se pudieron cargar los productos."
             );
 
@@ -402,10 +570,14 @@ async function loadProducts() {
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            "ERROR PRODUCTOS:",
+            error
+        );
+
 
         alert(
-            "Error cargando productos: " +
+            "Error cargando productos:\n\n" +
             error.message
         );
 
@@ -426,13 +598,15 @@ function updateStats() {
 
     const visible =
         adminProducts.filter(
-            product => product.active
+            product =>
+                product.active
         ).length;
 
 
     const featured =
         adminProducts.filter(
-            product => product.featured
+            product =>
+                product.featured
         ).length;
 
 
@@ -443,24 +617,52 @@ function updateStats() {
         ).length;
 
 
-    document.getElementById(
-        "statTotal"
-    ).textContent = total;
+    const statTotal =
+        document.getElementById(
+            "statTotal"
+        );
 
 
-    document.getElementById(
-        "statVisible"
-    ).textContent = visible;
+    const statVisible =
+        document.getElementById(
+            "statVisible"
+        );
 
 
-    document.getElementById(
-        "statFeatured"
-    ).textContent = featured;
+    const statFeatured =
+        document.getElementById(
+            "statFeatured"
+        );
 
 
-    document.getElementById(
-        "statOut"
-    ).textContent = out;
+    const statOut =
+        document.getElementById(
+            "statOut"
+        );
+
+
+    if (statTotal) {
+        statTotal.textContent =
+            total;
+    }
+
+
+    if (statVisible) {
+        statVisible.textContent =
+            visible;
+    }
+
+
+    if (statFeatured) {
+        statFeatured.textContent =
+            featured;
+    }
+
+
+    if (statOut) {
+        statOut.textContent =
+            out;
+    }
 
 }
 
@@ -477,175 +679,207 @@ function renderProductsTable() {
         );
 
 
+    if (!table) return;
+
+
     table.innerHTML = "";
 
 
-    adminProducts.forEach(product => {
+    adminProducts.forEach(
+        product => {
 
-        const row =
-            document.createElement("tr");
-
-
-        const image =
-            product.image ||
-            (
-                Array.isArray(product.images) &&
-                product.images.length
-                    ? product.images[0]
-                    : ""
-            );
+            const row =
+                document.createElement(
+                    "tr"
+                );
 
 
-        row.innerHTML = `
-
-            <td>
-
-                ${
-                    image
-                        ? `
-                            <img
-                                class="table-image"
-                                src="${escapeAttribute(image)}"
-                                alt=""
-                            >
-                          `
-                        : "🛍️"
-                }
-
-            </td>
-
-
-            <td>
-
-                <strong>
-                    ${escapeHTML(product.name)}
-                </strong>
-
-                ${
-                    product.badge
-                        ? `
-                            <small>
-                                🏷️ ${escapeHTML(product.badge)}
-                            </small>
-                          `
+            const image =
+                product.image ||
+                (
+                    Array.isArray(
+                        product.images
+                    ) &&
+                    product.images.length
+                        ? product.images[0]
                         : ""
-                }
-
-            </td>
+                );
 
 
-            <td>
-                ${escapeHTML(product.category)}
-            </td>
+            row.innerHTML = `
+
+                <td>
+
+                    ${
+                        image
+                            ? `
+                                <img
+                                    class="table-image"
+                                    src="${escapeAttribute(image)}"
+                                    alt=""
+                                >
+                              `
+                            : "🛍️"
+                    }
+
+                </td>
 
 
-            <td>
-                ${formatPrice(product.price)}
-            </td>
+                <td>
+
+                    <strong>
+                        ${escapeHTML(product.name)}
+                    </strong>
+
+                    ${
+                        product.badge
+                            ? `
+                                <small>
+                                    🏷️
+                                    ${escapeHTML(product.badge)}
+                                </small>
+                              `
+                            : ""
+                    }
+
+                </td>
 
 
-            <td>
-                ${Number(product.stock || 0)}
-            </td>
+                <td>
+                    ${escapeHTML(product.category)}
+                </td>
 
 
-            <td>
-
-                ${
-                    product.active
-                        ? `
-                            <span class="status active">
-                                Visible
-                            </span>
-                          `
-                        : `
-                            <span class="status inactive">
-                                Oculto
-                            </span>
-                          `
-                }
-
-            </td>
+                <td>
+                    ${formatPrice(
+                        product.price,
+                        product.currency
+                    )}
+                </td>
 
 
-            <td>
-
-                <div class="table-actions">
-
-                    <button
-                        data-edit="${product.id}"
-                    >
-                        ✏️
-                    </button>
-
-                    <button
-                        data-toggle="${product.id}"
-                    >
-                        👁️
-                    </button>
-
-                    <button
-                        data-delete="${product.id}"
-                        class="danger"
-                    >
-                        🗑️
-                    </button>
-
-                </div>
-
-            </td>
-
-        `;
+                <td>
+                    ${Number(
+                        product.stock || 0
+                    )}
+                </td>
 
 
-        table.appendChild(row);
+                <td>
 
-    });
+                    ${
+                        product.active
+                            ? `
+                                <span class="status active">
+                                    Visible
+                                </span>
+                              `
+                            : `
+                                <span class="status inactive">
+                                    Oculto
+                                </span>
+                              `
+                    }
+
+                </td>
+
+
+                <td>
+
+                    <div class="table-actions">
+
+                        <button
+                            data-edit="${escapeAttribute(product.id)}"
+                            type="button"
+                        >
+                            ✏️
+                        </button>
+
+                        <button
+                            data-toggle="${escapeAttribute(product.id)}"
+                            type="button"
+                        >
+                            👁️
+                        </button>
+
+                        <button
+                            data-delete="${escapeAttribute(product.id)}"
+                            class="danger"
+                            type="button"
+                        >
+                            🗑️
+                        </button>
+
+                    </div>
+
+                </td>
+
+            `;
+
+
+            table.appendChild(
+                row
+            );
+
+        }
+    );
 
 
     table
-        .querySelectorAll("[data-edit]")
-        .forEach(button => {
+        .querySelectorAll(
+            "[data-edit]"
+        )
+        .forEach(
+            button => {
 
-            button.addEventListener(
-                "click",
-                () =>
-                    editProduct(
-                        button.dataset.edit
-                    )
-            );
+                button.addEventListener(
+                    "click",
+                    () =>
+                        editProduct(
+                            button.dataset.edit
+                        )
+                );
 
-        });
-
-
-    table
-        .querySelectorAll("[data-toggle]")
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () =>
-                    toggleProduct(
-                        button.dataset.toggle
-                    )
-            );
-
-        });
+            }
+        );
 
 
     table
-        .querySelectorAll("[data-delete]")
-        .forEach(button => {
+        .querySelectorAll(
+            "[data-toggle]"
+        )
+        .forEach(
+            button => {
 
-            button.addEventListener(
-                "click",
-                () =>
-                    deleteProduct(
-                        button.dataset.delete
-                    )
-            );
+                button.addEventListener(
+                    "click",
+                    () =>
+                        toggleProduct(
+                            button.dataset.toggle
+                        )
+                );
 
-        });
+            }
+        );
+
+
+    table
+        .querySelectorAll(
+            "[data-delete]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () =>
+                        deleteProduct(
+                            button.dataset.delete
+                        )
+                );
+
+            }
+        );
 
 }
 
@@ -662,6 +896,9 @@ function setupForm() {
         );
 
 
+    if (!form) return;
+
+
     form.addEventListener(
         "submit",
         async event => {
@@ -674,24 +911,36 @@ function setupForm() {
     );
 
 
-    document
-        .getElementById(
+    const imageInput =
+        document.getElementById(
             "productImages"
-        )
-        .addEventListener(
+        );
+
+
+    if (imageInput) {
+
+        imageInput.addEventListener(
             "change",
             handleImages
         );
 
+    }
 
-    document
-        .getElementById(
+
+    const cancelButton =
+        document.getElementById(
             "cancelEdit"
-        )
-        .addEventListener(
+        );
+
+
+    if (cancelButton) {
+
+        cancelButton.addEventListener(
             "click",
             resetForm
         );
+
+    }
 
 }
 
@@ -713,12 +962,19 @@ function handleImages(event) {
 }
 
 
+/* =========================================================
+   PREVISUALIZAR IMÁGENES
+   ========================================================= */
+
 function renderImagePreview() {
 
     const preview =
         document.getElementById(
             "imagePreview"
         );
+
+
+    if (!preview) return;
 
 
     preview.innerHTML = "";
@@ -728,14 +984,19 @@ function renderImagePreview() {
         file => {
 
             const url =
-                URL.createObjectURL(file);
+                URL.createObjectURL(
+                    file
+                );
 
 
             const image =
-                document.createElement("img");
+                document.createElement(
+                    "img"
+                );
 
 
-            image.src = url;
+            image.src =
+                url;
 
 
             preview.appendChild(
@@ -784,14 +1045,16 @@ async function uploadImage(file) {
                         `Bearer ${session.access_token}`,
 
                     "Content-Type":
-                        file.type,
+                        file.type || "application/octet-stream",
 
                     "x-upsert":
                         "false"
 
                 },
 
-                body: file
+                body:
+                    file
+
             }
         );
 
@@ -800,6 +1063,7 @@ async function uploadImage(file) {
 
         const error =
             await response.text();
+
 
         throw new Error(
             "Error subiendo imagen: " +
@@ -828,8 +1092,12 @@ async function saveProduct() {
         );
 
 
-    message.textContent =
-        "Guardando producto...";
+    if (message) {
+
+        message.textContent =
+            "Guardando producto...";
+
+    }
 
 
     try {
@@ -858,6 +1126,18 @@ async function saveProduct() {
                     "productPrice"
                 ).value
             );
+
+
+        const currencyElement =
+            document.getElementById(
+                "productCurrency"
+            );
+
+
+        const currency =
+            currencyElement
+                ? currencyElement.value
+                : "USD";
 
 
         const oldPriceValue =
@@ -920,7 +1200,9 @@ async function saveProduct() {
                     );
 
 
-                imageUrls.push(url);
+                imageUrls.push(
+                    url
+                );
 
             }
 
@@ -943,11 +1225,10 @@ async function saveProduct() {
         }
 
 
-        const allImages =
-            [
-                ...existingImages,
-                ...imageUrls
-            ];
+        const allImages = [
+            ...existingImages,
+            ...imageUrls
+        ];
 
 
         const payload = {
@@ -955,6 +1236,8 @@ async function saveProduct() {
             name,
 
             price,
+
+            currency,
 
             old_price:
                 oldPrice,
@@ -998,6 +1281,7 @@ async function saveProduct() {
                             JSON.stringify(
                                 payload
                             )
+
                     }
                 );
 
@@ -1012,16 +1296,19 @@ async function saveProduct() {
                         method: "POST",
 
                         headers: {
+
                             ...authHeaders(),
 
                             Prefer:
                                 "return=representation"
+
                         },
 
                         body:
                             JSON.stringify(
                                 payload
                             )
+
                     }
                 );
 
@@ -1035,17 +1322,23 @@ async function saveProduct() {
 
 
             throw new Error(
-                error
+                error ||
+                "No se pudo guardar el producto."
             );
 
         }
 
 
-        message.textContent =
-            "✅ Producto guardado correctamente.";
+        if (message) {
+
+            message.textContent =
+                "✅ Producto guardado correctamente.";
+
+        }
 
 
         resetForm();
+
 
         await loadProducts();
 
@@ -1065,11 +1358,19 @@ async function saveProduct() {
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            "ERROR GUARDANDO PRODUCTO:",
+            error
+        );
 
-        message.textContent =
-            "❌ " +
-            error.message;
+
+        if (message) {
+
+            message.textContent =
+                "❌ " +
+                error.message;
+
+        }
 
     }
 
@@ -1118,13 +1419,27 @@ function editProduct(id) {
     document.getElementById(
         "productPrice"
     ).value =
-        product.price || "";
+        product.price ?? "";
+
+
+    const currencyElement =
+        document.getElementById(
+            "productCurrency"
+        );
+
+
+    if (currencyElement) {
+
+        currencyElement.value =
+            product.currency || "USD";
+
+    }
 
 
     document.getElementById(
         "productOldPrice"
     ).value =
-        product.old_price || "";
+        product.old_price ?? "";
 
 
     document.getElementById(
@@ -1157,10 +1472,18 @@ function editProduct(id) {
         product.featured === true;
 
 
-    document.getElementById(
-        "formTitle"
-    ).textContent =
-        "Editar producto";
+    const formTitle =
+        document.getElementById(
+            "formTitle"
+        );
+
+
+    if (formTitle) {
+
+        formTitle.textContent =
+            "Editar producto";
+
+    }
 
 
     selectedImages = [];
@@ -1188,6 +1511,9 @@ function renderExistingImages() {
         );
 
 
+    if (!preview) return;
+
+
     preview.innerHTML = "";
 
 
@@ -1200,21 +1526,25 @@ function renderExistingImages() {
             : [];
 
 
-    images.forEach(url => {
+    images.forEach(
+        url => {
 
-        const image =
-            document.createElement("img");
+            const image =
+                document.createElement(
+                    "img"
+                );
 
 
-        image.src =
-            url;
+            image.src =
+                url;
 
 
-        preview.appendChild(
-            image
-        );
+            preview.appendChild(
+                image
+            );
 
-    });
+        }
+    );
 
 }
 
@@ -1252,13 +1582,19 @@ async function toggleProduct(id) {
                             active:
                                 !product.active
                         })
+
                 }
             );
 
 
         if (!response.ok) {
 
+            const error =
+                await response.text();
+
+
             throw new Error(
+                error ||
                 "No se pudo cambiar el estado."
             );
 
@@ -1270,6 +1606,8 @@ async function toggleProduct(id) {
     }
 
     catch (error) {
+
+        console.error(error);
 
         alert(
             error.message
@@ -1316,13 +1654,19 @@ async function deleteProduct(id) {
 
                     headers:
                         authHeaders()
+
                 }
             );
 
 
         if (!response.ok) {
 
+            const error =
+                await response.text();
+
+
             throw new Error(
+                error ||
                 "No se pudo eliminar."
             );
 
@@ -1334,6 +1678,8 @@ async function deleteProduct(id) {
     }
 
     catch (error) {
+
+        console.error(error);
 
         alert(
             error.message
@@ -1357,37 +1703,101 @@ function resetForm() {
         [];
 
 
-    document
-        .getElementById(
+    const form =
+        document.getElementById(
             "productForm"
-        )
-        .reset();
+        );
 
 
-    document.getElementById(
-        "productId"
-    ).value = "";
+    if (form) {
+
+        form.reset();
+
+    }
 
 
-    document.getElementById(
-        "productActive"
-    ).checked = true;
+    const productId =
+        document.getElementById(
+            "productId"
+        );
 
 
-    document.getElementById(
-        "imagePreview"
-    ).innerHTML = "";
+    if (productId) {
+
+        productId.value =
+            "";
+
+    }
 
 
-    document.getElementById(
-        "formTitle"
-    ).textContent =
-        "Publicar producto";
+    const productActive =
+        document.getElementById(
+            "productActive"
+        );
 
 
-    document.getElementById(
-        "formMessage"
-    ).textContent = "";
+    if (productActive) {
+
+        productActive.checked =
+            true;
+
+    }
+
+
+    const productCurrency =
+        document.getElementById(
+            "productCurrency"
+        );
+
+
+    if (productCurrency) {
+
+        productCurrency.value =
+            "USD";
+
+    }
+
+
+    const imagePreview =
+        document.getElementById(
+            "imagePreview"
+        );
+
+
+    if (imagePreview) {
+
+        imagePreview.innerHTML =
+            "";
+
+    }
+
+
+    const formTitle =
+        document.getElementById(
+            "formTitle"
+        );
+
+
+    if (formTitle) {
+
+        formTitle.textContent =
+            "Publicar producto";
+
+    }
+
+
+    const formMessage =
+        document.getElementById(
+            "formMessage"
+        );
+
+
+    if (formMessage) {
+
+        formMessage.textContent =
+            "";
+
+    }
 
 }
 
@@ -1407,7 +1817,8 @@ function renderCategorySelect() {
     if (!select) return;
 
 
-    select.innerHTML = "";
+    select.innerHTML =
+        "";
 
 
     CATEGORIES.forEach(
@@ -1449,24 +1860,31 @@ function renderAdminCategories() {
         );
 
 
+    if (!container) return;
+
+
     container.innerHTML =
-        CATEGORIES.map(
-            category => `
+        CATEGORIES
+            .map(
+                category => `
 
-                <div class="category-admin-card">
+                    <div class="category-admin-card">
 
-                    <span>
-                        ${category.icon}
-                    </span>
+                        <span>
+                            ${category.icon}
+                        </span>
 
-                    <strong>
-                        ${escapeHTML(category.name)}
-                    </strong>
+                        <strong>
+                            ${escapeHTML(
+                                category.name
+                            )}
+                        </strong>
 
-                </div>
+                    </div>
 
-            `
-        ).join("");
+                `
+            )
+            .join("");
 
 }
 
@@ -1481,40 +1899,44 @@ function setupNavigation() {
         .querySelectorAll(
             "[data-page]"
         )
-        .forEach(button => {
+        .forEach(
+            button => {
 
-            button.addEventListener(
-                "click",
-                () => {
+                button.addEventListener(
+                    "click",
+                    () => {
 
-                    showPage(
-                        button.dataset.page
-                    );
+                        showPage(
+                            button.dataset.page
+                        );
 
-                }
-            );
+                    }
+                );
 
-        });
+            }
+        );
 
 
     document
         .querySelectorAll(
             "[data-go]"
         )
-        .forEach(button => {
+        .forEach(
+            button => {
 
-            button.addEventListener(
-                "click",
-                () => {
+                button.addEventListener(
+                    "click",
+                    () => {
 
-                    showPage(
-                        button.dataset.go
-                    );
+                        showPage(
+                            button.dataset.go
+                        );
 
-                }
-            );
+                    }
+                );
 
-        });
+            }
+        );
 
 }
 
@@ -1529,13 +1951,15 @@ function showPage(page) {
         .querySelectorAll(
             ".admin-page"
         )
-        .forEach(section => {
+        .forEach(
+            section => {
 
-            section.classList.remove(
-                "active"
-            );
+                section.classList.remove(
+                    "active"
+                );
 
-        });
+            }
+        );
 
 
     const target =
@@ -1557,14 +1981,16 @@ function showPage(page) {
         .querySelectorAll(
             ".sidebar-button"
         )
-        .forEach(button => {
+        .forEach(
+            button => {
 
-            button.classList.toggle(
-                "active",
-                button.dataset.page === page
-            );
+                button.classList.toggle(
+                    "active",
+                    button.dataset.page === page
+                );
 
-        });
+            }
+        );
 
 }
 
@@ -1572,22 +1998,22 @@ function showPage(page) {
 /* =========================================================
    PRECIO
    ========================================================= */
-<div class="form-group">
-    <label for="productCurrency">Moneda</label>
 
-    <select id="productCurrency" required>
-        <option value="USD">USD — Dólares</option>
-        <option value="CUP">CUP — Pesos cubanos</option>
-    </select>
-</div>
-function formatPrice(value, currency = "USD") {
+function formatPrice(
+    value,
+    currency = "USD"
+) {
 
     const money =
         Number(value || 0)
-            .toLocaleString("es-CU", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+            .toLocaleString(
+                "es-CU",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            );
+
 
     return `${money} ${currency || "USD"}`;
 
@@ -1595,23 +2021,46 @@ function formatPrice(value, currency = "USD") {
 
 
 /* =========================================================
-   ESCAPE
+   ESCAPE HTML
    ========================================================= */
 
 function escapeHTML(value) {
 
-    return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 
 }
 
 
+/* =========================================================
+   ESCAPE ATTRIBUTE
+   ========================================================= */
+
 function escapeAttribute(value) {
 
-    return escapeHTML(value);
+    return escapeHTML(
+        value
+    );
 
 }
