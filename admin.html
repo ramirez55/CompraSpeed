@@ -8,7 +8,6 @@
 </head>
 <body>
 
-    <!-- LOGIN -->
     <section id="loginSection" class="login-section">
         <div class="login-box">
             <div class="login-logo">⚡</div>
@@ -27,15 +26,12 @@
                 </div>
 
                 <button type="submit" class="primary-button">🔑 Iniciar sesión</button>
-                <p id="loginError" class="error"></p>
             </form>
         </div>
     </section>
 
-    <!-- ADMIN PANEL -->
     <section id="adminSection" class="admin-section" style="display:none;">
 
-        <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-logo">
                 ⚡ <span>COMPRA SPEED</span>
@@ -45,7 +41,6 @@
                 <button class="sidebar-button active" data-page="dashboard">📊 Dashboard</button>
                 <button class="sidebar-button" data-page="products">⚡ Productos</button>
                 <button class="sidebar-button" data-page="publish">➕ Publicar</button>
-                <button class="sidebar-button" data-page="categories">📁 Categorías</button>
                 <button class="sidebar-button" data-page="settings">⚙️ Ajustes / Moneda</button>
             </nav>
 
@@ -55,10 +50,8 @@
             </div>
         </aside>
 
-        <!-- MAIN CONTENT -->
         <main class="admin-content">
 
-            <!-- DASHBOARD PAGE -->
             <section class="admin-page active" id="page-dashboard">
                 <div class="page-header">
                     <div>
@@ -111,7 +104,6 @@
                 </div>
             </section>
 
-            <!-- PRODUCTOS PAGE -->
             <section class="admin-page" id="page-products">
                 <div class="page-header">
                     <div>
@@ -135,13 +127,11 @@
                             </tr>
                         </thead>
                         <tbody id="productsTable">
-                            <!-- Inyección dinámica JS -->
                         </tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- PUBLICAR PAGE -->
             <section class="admin-page" id="page-publish">
                 <div class="page-header">
                     <div>
@@ -155,9 +145,9 @@
 
                     <div class="form-grid">
                         <div class="form-group full">
-                            <label for="productImages">Fotos del producto</label>
-                            <input type="file" id="productImages" accept="image/*" multiple>
-                            <small>Puedes seleccionar varias imágenes.</small>
+                            <label for="productImages">Foto del producto</label>
+                            <input type="file" id="productImages" accept="image/*">
+                            <small>Selecciona una imagen en formato JPG, PNG o WEBP.</small>
                             <div id="imagePreview" class="image-preview"></div>
                         </div>
 
@@ -225,24 +215,9 @@
                         <button type="submit" class="primary-button">💾 Guardar producto</button>
                         <button type="button" id="cancelEdit" class="secondary-button" style="display:none;">Cancelar</button>
                     </div>
-
-                    <p id="formMessage" class="form-message"></p>
                 </form>
             </section>
 
-            <!-- CATEGORIAS PAGE -->
-            <section class="admin-page" id="page-categories">
-                <div class="page-header">
-                    <div>
-                        <h1>Categorías</h1>
-                        <p>Categorías disponibles en la tienda.</p>
-                    </div>
-                </div>
-
-                <div id="categoriesAdmin" class="categories-admin"></div>
-            </section>
-
-            <!-- AJUSTES Y CAMBIO DE MONEDA -->
             <section class="admin-page" id="page-settings">
                 <div class="page-header">
                     <div>
