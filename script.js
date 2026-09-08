@@ -1,21 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Configuración del Footer
     const yearSpan = document.getElementById('year');
     if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
-    // Carga de Ajustes e Historial Local
     let settings = JSON.parse(localStorage.getItem('cs_settings')) || { exchangeRate: 320, defaultCurrency: 'USD' };
     let currentCurrency = settings.defaultCurrency;
 
     let products = JSON.parse(localStorage.getItem('cs_products')) || [
-        { id: 1, name: 'iPhone 15', category: 'Tecnología', price: 800, currency: 'USD', oldPrice: 900, stock: 5, badge: 'Nuevo', active: true, featured: true, description: 'Excelente estado, importado.' },
-        { id: 2, name: 'Perfume Elegance', category: 'Perfumes', price: 3200, currency: 'CUP', oldPrice: 4000, stock: 10, badge: 'Oferta', active: true, featured: false, description: 'Fragancia duradera 100ml.' }
+        { id: 1, name: 'iPhone 15', category: 'Tecnología', price: 800, currency: 'USD', oldPrice: 900, stock: 5, badge: 'Nuevo', active: true, featured: true, description: 'Excelente estado, importado.', image: '' },
+        { id: 2, name: 'Perfume Elegance', category: 'Perfumes', price: 3200, currency: 'CUP', oldPrice: 4000, stock: 10, badge: 'Oferta', active: true, featured: false, description: 'Fragancia duradera 100ml.', image: '' }
     ];
 
     let cart = JSON.parse(localStorage.getItem('cs_cart')) || [];
     let selectedCategory = 'all';
 
-    // Selector de Moneda
     const currencyToggle = document.getElementById('currencyToggle');
     if (currencyToggle) {
         currencyToggle.value = currentCurrency;
@@ -26,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Calculadora / Conversor de Monedas
     function formatPrice(amount, baseCurrency) {
         if (!amount || isNaN(amount)) return '';
         let converted = amount;
@@ -38,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${currentCurrency} $${converted.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 
-    // Renderizar Categorías en la Tienda
     function renderCategories() {
         const categoriesContainer = document.getElementById('categories');
         if (!categoriesContainer) return;
@@ -59,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Renderizar Tarjetas de Productos
     function renderProducts() {
         const grid = document.getElementById('productsGrid');
         const empty = document.getElementById('emptyProducts');
@@ -70,18 +64,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let filtered = products.filter(p => p.active);
 
-        // Filtrado por Categoría
         if (selectedCategory !== 'all') {
             filtered = filtered.filter(p => p.category === selectedCategory);
         }
 
-        // Búsqueda por Texto
         if (searchInput && searchInput.value.trim() !== '') {
             const query = searchInput.value.toLowerCase().trim();
-            filtered = filtered.filter(p => p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query));
+            filtered = filtered.filter(p => p.name.toLowerCase().includes(query) || (p.description && p.description.toLowerCase().includes(query)));
         }
 
-        // Ordenación
         if (sortSelect) {
             const val = sortSelect.value;
             if (val === 'az') filtered.sort((a, b) => a.name.localeCompare(b.name));
@@ -101,6 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
         grid.innerHTML = filtered.map(p => `
             <div class="product-card">
                 ${p.badge ? `<span class="badge">${p.badge}</span>` : ''}
+                <div class="product-image-container" style="width:100%; height:180px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#f0f0f0; margin-bottom:10px; border-radius:8px;">
+                    ${p.image ? `<img src="${p.image}" alt="${p.name}" style="width:100%; height:100%; object-fit:cover;">` : '<span style="font-size:3rem;">📦</span>'}
+                </div>
                 <h3>${p.name}</h3>
                 <p class="category">${p.category}</p>
                 <div class="prices">
@@ -114,14 +108,12 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     }
 
-    // Eventos de Filtro y Búsqueda
     const searchInput = document.getElementById('searchInput');
     if (searchInput) searchInput.addEventListener('input', renderProducts);
 
     const sortSelect = document.getElementById('sortSelect');
     if (sortSelect) sortSelect.addEventListener('change', renderProducts);
 
-    // Carrito de Compras
     window.addToCart = function(id) {
         const prod = products.find(p => p.id === id);
         if (!prod) return;
@@ -183,7 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cartBody.innerHTML = html;
     }
 
-    // Modal Carrito
     const openCartBtn = document.getElementById('openCart');
     const closeCartBtn = document.getElementById('closeCart');
     const cartModal = document.getElementById('cartModal');
@@ -201,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Inicialización de la Tienda
     renderCategories();
     renderProducts();
     updateCart();
